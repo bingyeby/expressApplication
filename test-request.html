@@ -1,0 +1,53 @@
+<html>
+<script src="/javascripts/jquery.js"></script>
+<script>   
+    $(function () {
+        $("#login").on('click', function () {
+            $.ajax({
+                url: "/api/userLogin",
+                type: "post",
+                data: {
+                    username: "aa",
+                    userpwd: "11"
+                }
+            }).success(function () {
+                console.log("success");
+            }).error(function () {
+                console.log("error")
+            })
+        });
+        $("#logout").on('click', function () {
+            $.ajax({
+                url: "/api/logout",
+                type: "get"
+            }).success(function () {
+                console.log("success");
+            }).error(function () {
+                console.log("error")
+            })
+        });
+        $("#getLsist").on('click', function () {
+            $.ajax({
+                url: "/api/list",
+                type: "get"
+            }).success(function () {
+                console.log("success");
+            }).error(function () {
+                console.log("error")
+            })
+        });
+
+
+
+    })
+
+</script>
+
+<body>
+    <button id="login">登陆</button>
+    <button id="logout">退出</button>
+    <button id="getLsist">查询</button>
+</body>
+
+
+</html>
