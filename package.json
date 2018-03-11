@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "rr": "nodemon"
+    "nodemon": "nodemon"
   },
   "dependencies": {
     "body-parser": "~1.18.2",

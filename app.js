@@ -5,10 +5,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
-var controller = require('./routes/controller');
-
 var util = require("./util/util");
 var log4js = util.log4js;
 var log = log4js.getLogger("cheese");
@@ -28,9 +24,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require("./util/sessionUtil")); // session
 
-app.use('/', index);
-app.use('/users', users);
-app.use('/api', controller); // 后台接口
+app.use('/', require('./routes/index'));
+app.use('/api/user', require('./routes/api.user')); // 后台接口
+app.use('/api/active', require('./routes/api.active')); // 后台接口
+app.use('/api', require('./routes/api')); // 后台接口
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -52,5 +49,6 @@ app.use(function (err, req, res, next) {
 
 app.listen(4000, function () {
   console.log("app start!")
+  console.log("http://localhost:3000/");
 });
 module.exports = app;

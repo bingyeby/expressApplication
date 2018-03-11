@@ -8,22 +8,20 @@ log.debug("a");
 
 // 数据插入
 exports.insert = function (user) {
-    var userInfo = {
-        username: user.username,
-        userpwd: user.userpwd,
-        userage: user.userage,
-        logindate: new Date()
-    };
-    return new userModel(userInfo).save(function (err, res) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(res);
-        }
-    })
+    return new userModel(user).save();
 };
 
-// 数据查找
+/**
+ * 根据username进行查找
+ * @param {*username} username 
+ */
+exports.findByName = function (username) {
+    var where = { username };
+    return userModel.find(where);
+}
+
+
+// 数据查找 用户名+密码
 exports.find = function (username, userpwd) {
     var where = {
         username,
@@ -39,10 +37,9 @@ exports.find = function (username, userpwd) {
     })
 };
 
+// 修改
 exports.update = function (where, update) {
-    return userModel.update({
-        username: "aa"
-    }, { userpwd: "22" }); // 用户aa修改密码为22
+    return userModel.update({ username: "aa" }, { userpwd: "22" }); // 用户aa修改密码为22
 }
 
 exports.findByIdAndUpdate = function (id) {
@@ -51,7 +48,7 @@ exports.findByIdAndUpdate = function (id) {
     }).catch(function (err) {
         console.log(JSON.stringify(err).red);
         return Promise.reject({ code: "error" })
-    })
+    });
 }
 
 /**
@@ -62,7 +59,7 @@ exports.remove = function (where) {
     return userModel.remove(where);// res 中返回是否成功及影响的行数 {"ok":1,"n":1}
 }
 
-
+// 期待添加的用户信息
 var users = [
     { username: "aa", userpwd: "11", userage: 18, logindate: Date.now() },
     { username: "bb", userpwd: "22", userage: 18, logindate: Date.now() }
@@ -83,7 +80,3 @@ var users = [
 //     .then(function (res) {
 //         console.log(res)
 //     });
-
-
-
-

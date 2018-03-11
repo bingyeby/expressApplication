@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 var fs = require("fs");
 var userC = require("../db/db.con.user");
+const uuid = require('uuid/v4');
+const crypto = require('crypto');
 
 /* 根据userName获取某个用户收藏的物品 */
 var collections = {
@@ -18,9 +20,9 @@ var userInfoList = {
     "by": "by",
     "amy": "amy",
     "aa": "11"
-}
+};
 
-/*  */
+/* 用户信息确认 */
 var findUsesr = function (username, userpwd) {
     console.log(username, "---", userpwd);
     if (userInfoList[username] == userpwd) {
@@ -28,12 +30,15 @@ var findUsesr = function (username, userpwd) {
     }
 };
 
-// 
+// 用户登录
 router.post('/userLogin', function (req, res, next) {
     console.log(req.body)
-    console.log(typeof req.body)
-    var user = findUsesr(req.body.username, req.body.userpwd);// 本地测试
-    userC.find(req.body.username, req.body.userpwd).then(function (res) {
+    console.log(typeof req.body) // obj
+    let md5 = crypto.createHash('md5');
+    md5.update(req.body.userpwd);
+    let userpwd = md5.digest('hex');// 16进制
+    // var user = findUsesr(req.body.username, userpwd);// 本地测试
+    userC.find(req.body.username, userpwd).then(function (res) {// 数据库测试
         if (res.length > 0) {
             console.log("存在用户".blue);
             return Promise.resolve(res[0]);// user
@@ -65,7 +70,7 @@ router.get('/logout', function (req, res, next) {
     req.session.destroy(function (err) {
         if (err) {
             res.json({ ret_code: 2, ret_msg: "退出登陆失败" });
-        }else{
+        } else {
             res.json({ ret_code: 0, ret_msg: "退出登陆成功" });
             res.clearCookie("sessionKey");
             res.redirect("/");
@@ -73,6 +78,7 @@ router.get('/logout', function (req, res, next) {
     })
 });
 
+// 随意一个查询接口，测试usersession
 router.get("/list", function (req, res, next) {
     var username = req.session.username;
     console.log("username of session".blue, username);
@@ -83,36 +89,38 @@ router.get("/list", function (req, res, next) {
     }
 });
 
+// 新增用户 0 判断
 router.post("/userCreate", function (req, res, next) {
-    // {username aa userpwd 11}
-    userC.insert(req.body).then(function () {
-        res.json({ "code": 1 });
-    }).catch(function () {
-        res.json({ "code": 0 });
+    userC.findByName(req.body.username).then(function (msg) {
+        if (msg.length > 0) {
+            res.send({ code: 1, msg: '用户名已存在' });
+        } else {
+            next();
+        }
     })
 })
-
-router.post("/*", function (req, res, next) {
-    console.log(req.session);
-    /* 
-    返回json
-        方式1：
-            res.format({
-                json:function(){
-                    res.send("{a:'b'}")
-                }
-            })
-        方式2：
-            res.json({a:"b"})
-    */
-    var responseStr = fs.readdirSync(`./jsonData/${req.params[0]}.json`)
-        .toString()
-        .split("\n")
-        .filter(function (n) {
-            return !/^\/\//.test(n);
-        })
-        .join("");
-    res.json(JSON.parse(responseStr));
+// 新增用户 1 新增
+router.post("/userCreate", function (req, res, next) {
+    // {username aa userpwd 11}
+    let userid = uuid().replace(/\-/g, '');
+    let md5 = crypto.createHash('md5');
+    md5.update(req.body.userpwd);
+    let userpwd = md5.digest('hex');// 16进制
+    let userInfo = {
+        userid,
+        username: req.body.username,
+        userpwd,
+        userage: 0,
+        logindate: new Date()
+    };
+    userC.insert(userInfo).then(function () {
+        console.log('add one user √');
+        res.json({ "code": 0 });
+    }).catch(function () {
+        console.log('add one user ×');
+        res.json({ "code": 1 });
+    });
 })
+
 
 module.exports = router;

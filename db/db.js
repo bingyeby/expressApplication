@@ -1,5 +1,5 @@
 var mongoose = require("mongoose"),
-    DB_URL = 'mongodb://localhost:27017/runoob';
+    DB_URL = 'mongodb://localhost:27017/myapp';
 
 mongoose.Promise = global.Promise;
 

@@ -2,13 +2,14 @@
 <script src="/javascripts/jquery.js"></script>
 <script>   
     $(function () {
-        $("#login").on('click', function () {
+        // 新建用户
+        $("#userCreate").on('click', function () {
             $.ajax({
-                url: "/api/userLogin",
+                url: "/api/user/userCreate",
                 type: "post",
                 data: {
-                    username: "aa",
-                    userpwd: "11"
+                    username: $("#username").val(),
+                    userpwd: $("#pwdword").val()
                 }
             }).success(function () {
                 console.log("success");
@@ -16,9 +17,25 @@
                 console.log("error")
             })
         });
+        // 登录
+        $("#login").on('click', function () {
+            $.ajax({
+                url: "/api/user/userLogin",
+                type: "post",
+                data: {
+                    username: $("#username").val(),
+                    userpwd: $("#pwdword").val()
+                }
+            }).success(function () {
+                console.log("success");
+            }).error(function () {
+                console.log("error")
+            })
+        });
+        // 退出
         $("#logout").on('click', function () {
             $.ajax({
-                url: "/api/logout",
+                url: "/api/user/logout",
                 type: "get"
             }).success(function () {
                 console.log("success");
@@ -26,9 +43,10 @@
                 console.log("error")
             })
         });
+        // 获取信息
         $("#getLsist").on('click', function () {
             $.ajax({
-                url: "/api/list",
+                url: "/api/user/list",
                 type: "get"
             }).success(function () {
                 console.log("success");
@@ -36,18 +54,20 @@
                 console.log("error")
             })
         });
-
-
-
     })
-
 </script>
 
 <body>
+    用户名：<input type="text" id="username">
+    <br>
+    <br>
+    密码：<input type="text" id="pwdword">
+    <br>
+    <br>
     <button id="login">登陆</button>
     <button id="logout">退出</button>
     <button id="getLsist">查询</button>
+    <button id="userCreate">userCreate</button>
 </body>
-
 
 </html>

@@ -1,4 +1,7 @@
 {
     "delay": "2500",
-    "ext": "js json"
+    "ext": "js json",
+    "ignore": [
+        "sessions"
+    ]
 }
