@@ -22,7 +22,8 @@ router.post("/*", function (req, res, next) {
         })
         .join("");
     res.json(JSON.parse(responseStr));
-})
+    res.redirect('/test_session');
+});
 
 
 module.exports = router;
