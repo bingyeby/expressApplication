@@ -70,9 +70,8 @@ router.get('/logout', function (req, res, next) {
     if (err) {
       res.json({ret_code: 2, ret_msg: "退出登陆失败"});
     } else {
-      res.json({ret_code: 0, ret_msg: "退出登陆成功"});
       res.clearCookie("sessionKey");
-      res.redirect("/");
+      res.json({ret_code: 0, ret_msg: "退出登陆成功"}); // res.redirect("/"); // 只能存在一个响应
     }
   })
 });
@@ -90,6 +89,7 @@ router.get("/list", function (req, res, next) {
 
 // 新增用户 0 判断
 router.post("/userCreate", function (req, res, next) {
+  console.log(`req.body`, req.body);
   dbConUser.findByName(req.body.username).then(function (msg) {
     if (msg.length > 0) {
       res.send({code: 1, msg: '用户名已存在'});
@@ -101,7 +101,7 @@ router.post("/userCreate", function (req, res, next) {
 
 // 新增用户 1 新增
 router.post("/userCreate", function (req, res, next) {
-  // {username aa userpwd 11}
+  // {username: aa, userpwd: 11}
   let userid = uuid().replace(/\-/g, '');
   let md5 = crypto.createHash('md5');
   md5.update(req.body.userpwd);
