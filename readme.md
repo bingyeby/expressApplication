@@ -13,35 +13,73 @@
 	https://github.com/sass/node-sass/releases
 	Ctrl+F 粘贴，找到那个文件，下载（必要的时候挂代理，浏览器下载通常都比 node 下载更快更稳定），然后文件存到一个稳定的路径，并复制路径
 	设置sass路径 set SASS_BINARY_PATH=D:/nodejs/.nodes/win32-x64-57_binding.node
+	
+	方法一：使用淘宝源
+    
+    npm config set sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
+    npm config set phantomjs_cdnurl=https://npm.taobao.org/mirrors/phantomjs/
+    npm config set electron_mirror=https://npm.taobao.org/mirrors/electron/
+    npm config set registry=https://registry.npm.taobao.org
+    
+    这样使用 npm install 安装 node-sass、electron 和 phantomjs 时都能自动从淘宝源上下载。
 
-### mongod
-	安装32位
-	https://www.cnblogs.com/cnblogs-jcy/p/6734889.html
+### mongodb
+	安装32位:
+	    https://www.cnblogs.com/cnblogs-jcy/p/6734889.html
+	    https://www.cnblogs.com/minily/p/9431609.html
 
 	安装32位的：
-	　　Method2: 直接通过连接下载（这是版本3.2.4 地址：http://downloads.mongodb.org/win32/mongodb-win32-i386-3.2.4-signed.msi）
+	    直接通过连接下载（这是版本3.2.4 地址：http://downloads.mongodb.org/win32/mongodb-win32-i386-3.2.4-signed.msi）
+	
+	安装64位的:
+	    https://fastdl.mongodb.org/win32/mongodb-win32-x86_64-2012plus-4.2.2.zip
 
-	在2015/3/17以前，MongoDB只有一个存储引擎，叫做MMAP，MongoDB3.0的推出使得MongoDB有了两个引擎：MMAPv1和WiredTiger。
-	>D:\MongoDB\Server\3.2\bin>mongod --dbpath D:\mongodb\data\db --storageEngine=mmapv1
+        提高下载速度: http://dl.mongodb.org/dl/win32/x86_64
+    
+    注:
+        在2015/3/17以前，MongoDB只有一个存储引擎，叫做MMAP，MongoDB3.0的推出使得MongoDB有了两个引擎：MMAPv1和WiredTiger。
+        >D:\MongoDB\Server\3.2\bin>mongod --dbpath D:\mongodb\data\db --storageEngine=mmapv1
 
-##### mongodb.config使用
-	mongodb.config 文件内容为：
-		dbpath=E:\mongodb\data\db
-		logpath=E:\mongodb\data\log\mongodb.log
+#### 安装
+    创建几个文件夹具体如下：数据库路径（data目录）、日志路径（logs目录）和日志文件（logs/mongo.log文件）
+    
+    创建配置文件mongo.conf :
+		dbpath=D:\MongoDB\mongodb\data #数据库路径  
+        logpath=D:\MongoDB\mongodb\logs\mongo.log #日志输出文件路径  
+        
+        logappend=true #错误日志采用追加模式  
+        journal=true #启用日志文件，默认启用  
+        quiet=true #这个选项可以过滤掉一些无用的日志信息，若需要调试使用请设置为false  
+        port=27017 #端口号 默认为27017 
+        
+		
+	1. 直接启动MongoDB服务
+       mongod –config “D:\Mongo\mongo.conf”
 
+    2. 创建并启动MongoDB服务
+       如果每次都如上操作，岂不是相当麻烦，按照如下命令来创建并启动MongoDB服务，就可以通过windows服务来管理MongoDB的启动和关闭了
+       mongod –config “D:\Mongo\mongo.conf” –install –serviceName “MongoDB”
+       net start MongoDB
+       执行完之后，就可以去服务里看是否有成功创建了
+       
+       
 	用管理员身份打开cmd命令行，进入MongoDB安装目录的 bin目录下（我的是D:\MongoDB\Server\3.2\bin） ，输入如下的命令：
 	>D:\MongoDB\Server\3.2\bin>mongod --config E:\mongodb\mongodb.config 
 	也可以是命令（这样 就直接给加入到 Windows的服务起了个名字 还是挺有用的）：
 	>D:\MongoDB\Server\3.2\bin>mongod --config E:\mongodb\mongodb.config  --install --serviceName "MongoDB"
 	如图结果存放在日志文件中，查看日志发现已经成功。如果失败有可能没有使用管理员身份，遭到拒绝访问。
 
-#### 其他
+#### 注册为服务
 	D:\Program Files\mongoDB\bin>mongod --dbpath E:\mongodb\data\db --storageEngine=mmapv1 --journal --logpath "D:\mongodb\data\log\mongodb.log"  --install --serviceName "MongoDB"
-
 	D:\Program Files\mongoDB\bin>net start MongoDB
+	
 	然后连接到mongodb数据库，执行这个命令：
-	　 mongo
-	　 下面就可以开始使用mongodb 了。
+	mongo
+
+#### 客户端
+    RoboMongo现在已经改名为robo 3t了
+    MongoDB Compass
+    
 
 ### Express 应用生成器
     http://www.expressjs.com.cn/starter/generator.html
@@ -118,21 +156,29 @@
 		filename - 文件在destination中的名称(DiskStorage)
 		path - 上传文件的全路径(DiskStorage)
 		buffer - 文件对象的Buffer(MemoryStorage)
-
-
-
-
-
-
-
-
-
-
-
-
+		
 ### 常用的API
 	res.sendStatus(500);
 	res.redirect('/admin/house');
 
 
+### 使用说明
+    启动项目
+        npm run nodemon
+    
+    ./public 中有两个测试页面
+        http://localhost:3000/test-user-login-logout-session.html
+        测试用户登录流程
+        
+        http://localhost:3000/test_file_up.html
+        测试文件文件上传功能
 
+    目录说明
+        bin express生成,启动项目
+        db  连接与操作数据库的逻辑
+        public  静态目录
+        routes  router.get('/api',....) 路由分流
+        sessions    用户登录的session存储
+        upload  文件上传后服务器存储目录
+        util    工具函数
+        views   模板文件夹 jade

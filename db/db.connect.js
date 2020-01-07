@@ -10,21 +10,21 @@ mongoose.connect(DB_URL);
 mongoose
     .connection
     .on("connected", function () {
-        console.log('Mongoose connection open to ' + DB_URL);
+      console.log('Mongoose connection open to ' + DB_URL);
     });
 
 /* connect error */
 mongoose
     .connection
     .on("error", function () {
-        console.log('Mongoose connection error ' + err);
+      console.log('Mongoose connection error ' + err);
     });
 
 /* connect success */
 mongoose
     .connection
     .on("disconnected", function () {
-        console.log('Mongoose connection disconnected');
+      console.log('Mongoose connection disconnected');
     });
 
-module.exports = mongoose;
+module.exports = mongoose
