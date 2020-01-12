@@ -6,7 +6,6 @@
 		http://blog.csdn.net/a419419/article/details/78831869
 		node中的express框架，nodemon设置修改代码后服务自动重启
 	
-	
 ### node-sass安装
 	去 Release 列表 找到对应的版本
 	https://github.com/sass/node-sass/releases/tag/v4.7.2
@@ -54,7 +53,7 @@
         
 		
 	1. 直接启动MongoDB服务
-       mongod –config “D:\Mongo\mongo.conf”
+       ./mongod --config  'D:\Program Files\mongodb\mongo.conf'
 
     2. 创建并启动MongoDB服务
        如果每次都如上操作，岂不是相当麻烦，按照如下命令来创建并启动MongoDB服务，就可以通过windows服务来管理MongoDB的启动和关闭了

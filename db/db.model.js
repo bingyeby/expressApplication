@@ -1,7 +1,7 @@
-var mongoose = require("./db.connect.js");
-var Schema = mongoose.Schema;
+let mongoose = require("./db.connect.js");
+let Schema = mongoose.Schema;
 
-var UserSchema = new Schema({
+let UserSchema = new Schema({
   userid: {
     type: String
   },
@@ -19,7 +19,7 @@ var UserSchema = new Schema({
   }
 });
 
-var activitySchema = new Schema({
+let activitySchema = new Schema({
   activityName: {
     type: String
   },

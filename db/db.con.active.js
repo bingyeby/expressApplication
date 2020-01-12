@@ -1,6 +1,6 @@
-var activeModel = require("./db.model").active;
+let activeModel = require("./db.model").active;
 
-var actives = [
+let actives = [
   {
     activityName: "run",
     activityMsg: "run a",
