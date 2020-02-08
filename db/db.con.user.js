@@ -25,15 +25,10 @@ exports.findByName = function (username) {
 
 /**
  * 数据查找 用户名+密码
- * @param username
- * @param userpwd
+ * @param where {username, password}
  * @returns {*}
  */
-exports.find = function (username, userpwd) {
-  let where = {
-    username,
-    userpwd
-  };
+exports.find = function (where) {
   return userModel.find(where, function (err, res) {
     if (err) {
       console.log("user find error");
@@ -51,7 +46,7 @@ exports.find = function (username, userpwd) {
  * @returns {IDBRequest<IDBValidKey>|Promise<void>|void}
  */
 exports.update = function (where, update) {
-  return userModel.update({username: "aa"}, {userpwd: "22"}); // 用户aa修改密码为22
+  return userModel.update({username: "aa"}, {password: "22"}); // 用户aa修改密码为22
 }
 
 
@@ -61,7 +56,7 @@ exports.update = function (where, update) {
  * @returns {Promise<T | never>}
  */
 exports.findByIdAndUpdate = function (id) {
-  return userModel.findByIdAndUpdate("id", {userpwd: "22"}).then(function (res) {
+  return userModel.findByIdAndUpdate("id", {password: "22"}).then(function (res) {
     return Promise.resolve({code: "success"});
   }).catch(function (err) {
     console.log(JSON.stringify(err).red);
@@ -83,8 +78,8 @@ exports.remove = function (where) {
 * */
 // 期待添加的用户信息
 // let users = [
-//   {username: "aa", userpwd: "11", userage: 18, logindate: Date.now()},
-//   {username: "bb", userpwd: "22", userage: 18, logindate: Date.now()}
+//   {username: "aa", password: "11", age: 18,},
+//   {username: "bb", password: "22", age: 18,},
 // ];
 
 // 创建用户
