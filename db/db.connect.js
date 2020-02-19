@@ -12,7 +12,7 @@ mongoose.connection.on("connected", function () {
 });
 
 /* connect error */
-mongoose.connection.on("error", function () {
+mongoose.connection.on("error", function (err) {
   console.log('Mongoose connection error ' + err);
 });
 

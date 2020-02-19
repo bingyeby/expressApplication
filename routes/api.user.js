@@ -117,11 +117,11 @@ router.post("/register", function (req, res, next) {
 })
 
 
-/**
+/*
  * 用户关注一个老师
- */
+ **/
 router.post("/followTeacher", function (req, res, next) {
-  db.m('user').update({_id: req.body.userId}, {$push: {teacher: req.body.teacherId}}).then((n, i) => {
+  db.m('user').update({_id: req.body.userId}, {$addToSet: {teacher: req.body.teacherId}}).then((n, i) => {
     res.json({
       code: 0,
       data: '关注成功!'
@@ -129,9 +129,73 @@ router.post("/followTeacher", function (req, res, next) {
   })
 });
 
+/*
+ * 用户报名参加一个课程
+ **/
+router.post("/attendCourse", function (req, res, next) {
+  db.m('user')
+      .update({_id: req.body.userId}, {$addToSet: {course: req.body.courseId}})
+      .then((n, i) => {
+        res.json({
+          code: 0,
+          data: '报名成功!'
+        });
+      })
+});
+
+
+/*
+* 用户信息更正
+* */
+router.post('/infoUpdate', async function (req, res, next) {
+  console.log(`req`, req.body, req.files);
+  let filePath = ''
+  if (_.size(req.files) > 0) {
+    filePath = req.files[0].path
+  }
+  await db.m('user').update({userId: req.body.userId}, {
+    userId: req.body.userId,
+    username: req.body.username,
+    phone: req.body.phone,
+    email: req.body.email,
+    subscription: req.body.subscription,
+    avatar: filePath ? filePath : null,
+  })
+  res.json({code: 0, data: '修改成功'})
+});
+
+/*
+ * 获取一个用户关注的老师信息
+ **/
 router.get('/followTeacherList', function (req, res, next) {
-  db.m('user').findOne(req.params.userId).populate('teacher').then((info) => {
-    res.json({code: 0, data: info.teacher})
+  db.m('user')
+      .findOne({_id: req.query.userId})
+      .populate('teacher')
+      .then((info) => {
+        console.log(`followTeacherList`, info);
+        res.json({code: 0, data: info.teacher})
+      })
+});
+
+
+/*
+ * 获取一个用户是否是老师的信息
+ **/
+router.get('/isTeacher', function (req, res, next) {
+  db.m('teacher')
+      .findOne({userId: req.query.userId})
+      .then((info) => {
+        console.log(`isTeacher`, info);
+        res.json({code: 0, data: info})
+      })
+});
+
+/*
+ * 获取报名参加的课程信息
+ **/
+router.get('/courseList', function (req, res, next) {
+  db.m('user').findOne({_id: req.query.userId}).populate('course').then((info) => {
+    res.json({code: 0, data: info.course})
   })
 });
 

@@ -13,15 +13,44 @@ router.get('/teacher/list', function (req, res, next) {
   })
 });
 
-router.get('/teacherDetail/:id', function (req, res, next) {
+router.get('/teacher/detail/:id', function (req, res, next) {
   db.m('teacher').findOne({_id: req.params.id}).then((info) => {
     res.json({code: 0, data: info})
   })
 });
-router.post('/teacher/teacherInfoList', function (req, res, next) {
-  db.m('teacher').find(req.params.teacher).then((info) => {
-    res.json({code: 0, data: info})
-  })
+
+/*
+* 新增老师信息[老师认证]
+*   没有此信息则新增,有此信息则修改
+*   todo 删除之前的图片
+* */
+router.post('/teacher/certificate', async function (req, res, next) {
+  console.log(`req`, req.body, req.files);
+  let filePath = ''
+  if (_.size(req.files) > 0) {
+    filePath = req.files[0].path
+  }
+  let info = await db.m('teacher').findOne({userId: req.body.userId})
+  if (!info) {
+    await db.m('teacher').insertMany({
+      userId: req.body.userId,
+      teacherName: req.body.teacherName,
+      certificate: req.body.certificate,
+      feature: req.body.feature,
+      experience: req.body.experience,
+      avatar: filePath,
+    })
+  } else {
+    await db.m('teacher').update({userId: req.body.userId}, {
+      userId: req.body.userId,
+      teacherName: req.body.teacherName,
+      certificate: req.body.certificate,
+      feature: req.body.feature,
+      experience: req.body.experience,
+      avatar: info.avatar || filePath,
+    })
+  }
+  res.json({code: 0, data: '接受了'})
 });
 
 router.get('/course/list', function (req, res, next) {
@@ -31,8 +60,8 @@ router.get('/course/list', function (req, res, next) {
   })
 });
 
-router.get('/courseDetail/:id', function (req, res, next) {
-  db.m('course').findOne({_id: req.params.id}).then((info) => {
+router.get('/course/detail/:id', function (req, res, next) {
+  db.m('course').findOne({_id: req.params.id}).populate('teacher').then((info) => {
     res.json({code: 0, data: info})
   })
 });

@@ -11,6 +11,8 @@ var log = log4js.getLogger("cheese");
 
 var app = express();
 
+global._ = require('lodash')
+
 
 //设置允许跨域访问该服务.
 app.all('*', function (req, res, next) {
@@ -32,7 +34,7 @@ app.set('view engine', 'jade');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));// 普通POST数据
 
-let multer = require('multer')({dest: './upload/'});
+let multer = require('multer')({dest: './cdnImg/'});
 app.use(multer.any());// 文件POST数据
 
 app.use(cookieParser());
@@ -44,6 +46,8 @@ app.use('/test/upload', require('./routes/test.upload')); // 测试文件上传
 app.use('/api/user', require('./routes/api.user')); // 后台接口
 app.use('/api/active', require('./routes/api.active')); // 后台接口
 app.use('/api', require('./routes/api')); // 后台接口,直接对接json文件
+
+app.use('/cdnImg', express.static(path.join(__dirname, 'cdnImg'))); // 上传的图片保存位置
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

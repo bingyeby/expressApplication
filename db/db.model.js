@@ -7,8 +7,11 @@ let UserSchema = new Schema({
   username: {type: String},// 姓名
   password: {type: String},// 密码
   age: {type: Number},// 年龄
+  subscription: {type: String},// 签名
+
   avatar: {type: String, default: '/static/images/user.avatar.1.png'},// 头像
   email: {type: String, default: '19879895889@163.com'},// 邮箱
+
   registerTime: {type: Date, default: new Date()},// 注册时间
   loginTime: {type: Date, default: new Date()},// 最后登录时间
 
@@ -25,6 +28,7 @@ let activitySchema = new Schema({
 })
 
 let teacherSchema = new Schema({
+  userId: {type: String},// 先建立个人账号,在个人账号界面认证(创建)老师, 个人界面通过此id来查询老师信息(是否是老师)
   teacherName: {type: String},// 老师名字
   avatar: {type: String, default: '/static/images/user.avatar.2.png'},// 老师头像
   certificate: {type: Array},// 证书
@@ -38,9 +42,8 @@ let courseSchema = new Schema({
   courseName: {type: String},// 课程名称
   courseDescribe: {type: String},// 课程描述
   destination: {type: String},// 地址
+  poster: {type: String},// 海报 图片地址
 
-
-  // teacherId: {type: String},// 老师id
   teacher: {type: Schema.Types.ObjectId, ref: 'teacher'}, // 老师id
 
   numTotal: {type: Number},// 允许报名人数
