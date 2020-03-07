@@ -1,28 +1,10 @@
-#### 使用方式
-	进入app执行npm install，安装相应的npm包
-
 ### nodemon
 	安装nodemon，执行ndoemon
 		http://blog.csdn.net/a419419/article/details/78831869
 		node中的express框架，nodemon设置修改代码后服务自动重启
-	
-### node-sass安装
-	去 Release 列表 找到对应的版本
-	https://github.com/sass/node-sass/releases/tag/v4.7.2
-	https://github.com/sass/node-sass/releases
-	Ctrl+F 粘贴，找到那个文件，下载（必要的时候挂代理，浏览器下载通常都比 node 下载更快更稳定），然后文件存到一个稳定的路径，并复制路径
-	设置sass路径 set SASS_BINARY_PATH=D:/nodejs/.nodes/win32-x64-57_binding.node
-	
-	方法一：使用淘宝源
-    
-    npm config set sass_binary_site=https://npm.taobao.org/mirrors/node-sass/
-    npm config set phantomjs_cdnurl=https://npm.taobao.org/mirrors/phantomjs/
-    npm config set electron_mirror=https://npm.taobao.org/mirrors/electron/
-    npm config set registry=https://registry.npm.taobao.org
-    
-    这样使用 npm install 安装 node-sass、electron 和 phantomjs 时都能自动从淘宝源上下载。
-
+		
 ### mongodb
+#### 安装
 	安装32位:
 	    https://www.cnblogs.com/cnblogs-jcy/p/6734889.html
 	    https://www.cnblogs.com/minily/p/9431609.html
@@ -38,8 +20,8 @@
     注:
         在2015/3/17以前，MongoDB只有一个存储引擎，叫做MMAP，MongoDB3.0的推出使得MongoDB有了两个引擎：MMAPv1和WiredTiger。
         >D:\MongoDB\Server\3.2\bin>mongod --dbpath D:\mongodb\data\db --storageEngine=mmapv1
-
-#### 安装
+        
+#### 使用
     创建几个文件夹具体如下：数据库路径（data目录）、日志路径（logs目录）和日志文件（logs/mongo.log文件）
     
     创建配置文件mongo.conf :
@@ -48,10 +30,9 @@
         
         logappend=true #错误日志采用追加模式  
         journal=true #启用日志文件，默认启用  
-        quiet=true #这个选项可以过滤掉一些无用的日志信息，若需要调试使用请设置为false  
+        quiet=true #这个选项可以过滤掉一些无用的日志信息，若需要调试使用请设置为false 
         port=27017 #端口号 默认为27017 
         
-		
 	1. 直接启动MongoDB服务
        ./mongod --config  'D:\Program Files\mongodb\mongo.conf'
 
@@ -75,11 +56,12 @@
 	然后连接到mongodb数据库，执行这个命令：
 	mongo
 
-#### 客户端
+#### MongoDB客户端
     RoboMongo现在已经改名为robo 3t了
     MongoDB Compass
+    Mongo Management Studio
     
-### .bat执行文件
+#### 手动启动执行文件.bat
     cmd /k "cd /d D:\Program Files\mongodb\bin && mongod.exe --config  "D:\Program Files\mongodb\mongo.conf""
 
 ### Express 应用生成器
@@ -124,7 +106,7 @@
 	2. 存储到new FormData().append(file,fileobj)
 	3. ajax post 方式提交请求：data:formdata
 
-#### node:
+#### node
 	添加multer中间件：
 		app.use(bodyParser.json());
 		app.use(bodyParser.urlencoded({ extended: false }));// 普通POST数据
@@ -158,13 +140,13 @@
 		path - 上传文件的全路径(DiskStorage)
 		buffer - 文件对象的Buffer(MemoryStorage)
 		
-### 常用的API
+### express 常用的API
 	res.sendStatus(500);
 	res.redirect('/admin/house');
 
 
 ### 使用说明
-    启动项目
+    开发环境
         npm run nodemon
     
     ./public 中有两个测试页面
