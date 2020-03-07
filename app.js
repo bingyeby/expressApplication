@@ -34,9 +34,6 @@ app.set('view engine', 'jade');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));// 普通POST数据
 
-let multer = require('multer')({dest: './cdnImg/'});
-app.use(multer.any());// 文件POST数据
-
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(require("./util/sessionUtil")); // session
@@ -53,7 +50,7 @@ app.use('/cdnImg', express.static(path.join(__dirname, 'cdnImg'))); // 上传的
 app.use(function (req, res, next) {
   var err = new Error('Not Found');
   err.status = 404;
-  console.error(`err`, err);
+  console.error(`Not Found`, req.path, err);
   next(err);
 });
 

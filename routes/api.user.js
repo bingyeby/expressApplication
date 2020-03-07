@@ -6,6 +6,8 @@ const uuid = require('uuid/v4');
 const crypto = require('crypto');
 let db = require("../db/db.util");
 
+let upload = require("../util/upload");
+
 /* 根据userName获取某个用户收藏的物品 */
 let collections = {
   "syl": ["1", "2", "5"],
@@ -38,7 +40,7 @@ router.post('/login', function (req, res, next) {
   md5.update(req.body.password);
   let password = md5.digest('hex');// 16进制
   // let user = findUser(req.body.username, password);// 本地测试
-  dbConUser.find({username: req.body.username, password}).then(function (res) {// 数据库测试
+  dbConUser.find({phone: req.body.phone, password}).then(function (res) {// 数据库测试
     if (res.length > 0) {
       console.log("存在用户".blue);
       return Promise.resolve(res[0]);// user
@@ -90,14 +92,14 @@ router.post("/register", function (req, res, next) {
 })
 
 // 新增用户 1 新增
+// {username: aa, password: 11}
 router.post("/register", function (req, res, next) {
-  // {username: aa, password: 11}
-  let userId = uuid().replace(/\-/g, '');
+  let uuidStr = uuid().replace(/\-/g, '');
   let md5 = crypto.createHash('md5');
   md5.update(req.body.password);
   let password = md5.digest('hex');// 16进制
   let userInfo = {
-    id: userId,
+    uuid: uuidStr,
     phone: req.body.phone,
     username: req.body.username,
     password,
@@ -118,6 +120,23 @@ router.post("/register", function (req, res, next) {
 
 
 /*
+* 密码重置
+* */
+router.post("/resetPassword", function (req, res, next) {
+  let md5 = crypto.createHash('md5');
+  md5.update('123');
+  let password = md5.digest('hex');// 16进制
+  db.m('user').update({phone: req.body.phone}, {password}).then((data) => {
+    console.log(`data`, data);
+    res.json({
+      code: 0,
+      data: '密码重置成功!'
+    });
+  })
+})
+
+
+/*
  * 用户关注一个老师
  **/
 router.post("/followTeacher", function (req, res, next) {
@@ -125,6 +144,18 @@ router.post("/followTeacher", function (req, res, next) {
     res.json({
       code: 0,
       data: '关注成功!'
+    });
+  })
+});
+
+/*
+ * 用户取消关注一个老师
+ **/
+router.post("/disFollowTeacher", function (req, res, next) {
+  db.m('user').update({_id: req.body.userId}, {$pull: {teacher: req.body.teacherId}}).then((n, i) => {
+    res.json({
+      code: 0,
+      data: '已经取消关注!'
     });
   })
 });
@@ -143,25 +174,22 @@ router.post("/attendCourse", function (req, res, next) {
       })
 });
 
-
 /*
 * 用户信息更正
 * */
-router.post('/infoUpdate', async function (req, res, next) {
-  console.log(`req`, req.body, req.files);
-  let filePath = ''
-  if (_.size(req.files) > 0) {
-    filePath = req.files[0].path
-  }
-  await db.m('user').update({userId: req.body.userId}, {
+router.post('/infoUpdate', upload.cdnImgUpload.single('avatar'), async function (req, res, next) {
+  console.log(`req.file`, req.file);
+  let updateInfo = {
     userId: req.body.userId,
+    nickname: req.body.nickname,
     username: req.body.username,
     phone: req.body.phone,
     email: req.body.email,
     subscription: req.body.subscription,
-    avatar: filePath ? filePath : null,
-  })
-  res.json({code: 0, data: '修改成功'})
+    avatar: req.file && req.file.path.replace('\\', '\/'),
+  }
+  await db.m('user').update({_id: req.body.userId}, updateInfo)
+  res.json({code: 0, data: updateInfo})
 });
 
 /*
@@ -181,13 +209,13 @@ router.get('/followTeacherList', function (req, res, next) {
 /*
  * 获取一个用户是否是老师的信息
  **/
-router.get('/isTeacher', function (req, res, next) {
-  db.m('teacher')
-      .findOne({userId: req.query.userId})
-      .then((info) => {
-        console.log(`isTeacher`, info);
-        res.json({code: 0, data: info})
-      })
+router.get('/isTeacher', async function (req, res, next) {
+  let teacherInfo = await db.m('teacher').findOne({userId: req.query.userId || 'xxx'})
+  if (teacherInfo) {
+    teacherInfo = teacherInfo.toObject() // 返回值不能操作,只读,需要通过toObject()执行后才可操作
+    teacherInfo.courseList = await db.m('course').find({teacher: teacherInfo._id})
+  }
+  res.json({code: 0, data: teacherInfo})
 });
 
 /*

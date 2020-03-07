@@ -4,8 +4,11 @@ const fs = require("fs");
 let _ = require('lodash');
 
 let db = require("../db/db.util");
+let upload = require("../util/upload");
 
-
+/*
+* 获取老师列表
+* */
 router.get('/teacher/list', function (req, res, next) {
   db.find('teacher', {}).then((list) => {
     console.log(`list`, list);
@@ -13,6 +16,9 @@ router.get('/teacher/list', function (req, res, next) {
   })
 });
 
+/*
+* 获取老师详情
+* */
 router.get('/teacher/detail/:id', function (req, res, next) {
   db.m('teacher').findOne({_id: req.params.id}).then((info) => {
     res.json({code: 0, data: info})
@@ -24,12 +30,8 @@ router.get('/teacher/detail/:id', function (req, res, next) {
 *   没有此信息则新增,有此信息则修改
 *   todo 删除之前的图片
 * */
-router.post('/teacher/certificate', async function (req, res, next) {
-  console.log(`req`, req.body, req.files);
-  let filePath = ''
-  if (_.size(req.files) > 0) {
-    filePath = req.files[0].path
-  }
+router.post('/teacher/certificate', upload.cdnImgUpload.single('avatar'), async function (req, res, next) {
+  console.log(`req`, req.body, req.file);
   let info = await db.m('teacher').findOne({userId: req.body.userId})
   if (!info) {
     await db.m('teacher').insertMany({
@@ -38,7 +40,7 @@ router.post('/teacher/certificate', async function (req, res, next) {
       certificate: req.body.certificate,
       feature: req.body.feature,
       experience: req.body.experience,
-      avatar: filePath,
+      avatar: req.file && req.file.path.replace('\\', '\/'),
     })
   } else {
     await db.m('teacher').update({userId: req.body.userId}, {
@@ -47,12 +49,15 @@ router.post('/teacher/certificate', async function (req, res, next) {
       certificate: req.body.certificate,
       feature: req.body.feature,
       experience: req.body.experience,
-      avatar: info.avatar || filePath,
+      avatar: req.file && req.file.path.replace('\\', '\/'),
     })
   }
   res.json({code: 0, data: '接受了'})
 });
 
+/*
+* 获取课程列表
+* */
 router.get('/course/list', function (req, res, next) {
   db.find('course', {}).then((list) => {
     console.log(`list`, list);
@@ -60,10 +65,40 @@ router.get('/course/list', function (req, res, next) {
   })
 });
 
+
+/*
+* 获取课程详情
+* */
 router.get('/course/detail/:id', function (req, res, next) {
   db.m('course').findOne({_id: req.params.id}).populate('teacher').then((info) => {
+    console.log(`info.teacher.avatar`, info.teacher.avatar);
     res.json({code: 0, data: info})
   })
+});
+
+/*
+* 课程新增
+* */
+router.post('/course/add', upload.cdnImgUpload.single('poster'), async function (req, res, next) {
+  console.log(`req`, req.body, req.file);
+  let info = await db.m('course').findOne({_id: req.body._id})
+  if (!info) {
+    await db.m('course').insertMany({
+      courseName: req.body.courseName,
+      courseDescribe: req.body.courseDescribe,
+      destination: req.body.destination,
+      poster: req.file && req.file.path.replace('\\', '\/'),
+      teacher: req.body.teacher,
+      numTotal: req.body.numTotal,
+      numCurrent: req.body.numCurrent,
+      beginTime: req.body.beginTime,
+      endTime: req.body.endTime,
+      deadlineTime: req.body.deadlineTime,
+    })
+  } else {
+    await db.m('course').update({_id: req.body._id}, {})
+  }
+  res.json({code: 0, data: '新增成功'})
 });
 
 // 直接返回本地的json文件

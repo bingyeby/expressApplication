@@ -79,6 +79,8 @@
     RoboMongo现在已经改名为robo 3t了
     MongoDB Compass
     
+### .bat执行文件
+    cmd /k "cd /d D:\Program Files\mongodb\bin && mongod.exe --config  "D:\Program Files\mongodb\mongo.conf""
 
 ### Express 应用生成器
     http://www.expressjs.com.cn/starter/generator.html

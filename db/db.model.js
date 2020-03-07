@@ -2,9 +2,10 @@ let mongoose = require("./db.connect.js");
 let Schema = mongoose.Schema;
 
 let UserSchema = new Schema({
-  id: {type: String},
+  uuid: {type: String},
   phone: {type: String, default: '19879895889'},// 手机
   username: {type: String},// 姓名
+  nickname: {type: String},// 昵称
   password: {type: String},// 密码
   age: {type: Number},// 年龄
   subscription: {type: String},// 签名
@@ -58,7 +59,7 @@ let courseSchema = new Schema({
   answer: {type: String},// 提问
 
   publishUser: {type: String},// 发布相关
-  publishTime: {type: Date},// 发布相关
+  publishTime: {type: Date, default: new Date()},// 发布相关
   publishPhone: {type: String},// 发布相关
 })
 
