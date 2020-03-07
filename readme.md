@@ -60,6 +60,10 @@
     RoboMongo现在已经改名为robo 3t了
     MongoDB Compass
     Mongo Management Studio
+
+#### mongooseJS
+    使用教程    https://segmentfault.com/blog/dorayu?tag=mongodb
+    文档        http://www.mongoosejs.net/docs/guide.html
     
 #### 手动启动执行文件.bat
     cmd /k "cd /d D:\Program Files\mongodb\bin && mongod.exe --config  "D:\Program Files\mongodb\mongo.conf""

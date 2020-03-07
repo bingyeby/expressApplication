@@ -14,8 +14,8 @@ var app = express();
 global._ = require('lodash')
 
 
-//设置允许跨域访问该服务.
-app.all('*', function (req, res, next) {
+//设置允许跨域访问该服务.  app.all('*', func)
+app.all('/api', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   res.header('Access-Control-Allow-Methods', '*');
@@ -36,7 +36,7 @@ app.use(bodyParser.urlencoded({extended: false}));// 普通POST数据
 
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(require("./util/sessionUtil")); // session
+app.use(require("./util/expressSession")); // session
 
 app.use('/', require('./routes/index'));
 app.use('/test/upload', require('./routes/test.upload')); // 测试文件上传
@@ -48,9 +48,9 @@ app.use('/cdnImg', express.static(path.join(__dirname, 'cdnImg'))); // 上传的
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  var err = new Error('Not Found');
+  var err = new Error(`${req.path} Not Found`);
   err.status = 404;
-  console.error(`Not Found`, req.path, err);
+  res.redirect('/404');
   next(err);
 });
 

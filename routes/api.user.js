@@ -5,56 +5,50 @@ let dbConUser = require("../db/db.con.user");
 const uuid = require('uuid/v4');
 const crypto = require('crypto');
 let db = require("../db/db.util");
-
 let upload = require("../util/upload");
 
-/* 根据userName获取某个用户收藏的物品 */
-let collections = {
+/* 本地数据集合模拟 */
+let listCollect = {
   "syl": ["1", "2", "5"],
   "by": ["1", "3", "5"],
-  "alice": ["1"],
-  "amy": ["3"],
-  "aa": ["0"]
 };
-
-let userInfoList = {
+let userCollect = {
   "syl": "syl",
-  "alice": "alice",
-  "by": "by",
-  "amy": "amy",
-  "aa": "11"
 };
 
-/* 用户信息确认 */
+/*
+* 用户信息确认 本地
+* */
 let findUser = function (username, password) {
   console.log(username, "---", password);
-  if (userInfoList[username] === password) {
+  if (userCollect[username] === password) {
     return {username, password}
   }
 };
 
-// 用户登录
+/*
+* 用户登录
+* */
 router.post('/login', function (req, res, next) {
-  console.log(req.body)
   let md5 = crypto.createHash('md5');
   md5.update(req.body.password);
   let password = md5.digest('hex');// 16进制
   // let user = findUser(req.body.username, password);// 本地测试
-  dbConUser.find({phone: req.body.phone, password}).then(function (res) {// 数据库测试
-    if (res.length > 0) {
+  db.m('user').findOne({phone: req.body.phone, password}).then(function (res) {// 数据库测试
+    if (res) {
       console.log("存在用户".blue);
-      return Promise.resolve(res[0]);// user
+      return Promise.resolve(res);// user
     } else {
       console.log("用户不存在".red);
       return Promise.reject("用户不存在");
     }
   }).then(function (user) {
     console.log(JSON.stringify(user).yellow);
-    req.session.regenerate(function (err) {
+    req.session.regenerate(function (err) {// 使再生；革新
       if (err) {
         res.json({code: -1, data: '登录失败'});
       } else {
-        req.session.username = user.username;
+        req.session.userId = user._id;
         console.log("登录成功".blue);
         res.json({code: 0, data: user});
       }
@@ -65,7 +59,9 @@ router.post('/login', function (req, res, next) {
   })
 });
 
-// 退出登录
+/*
+* 退出登录
+* */
 router.get('/logout', function (req, res, next) {
   // 备注：这里用的session-file-store在destroy方法里面，并没有销毁cookie
   // 所以客户端的cookie还是存在，导致退出登陆后服务器端检测到cookie，然后去查找对应的session文件，报错；是session-file-store本身的bug
@@ -79,7 +75,9 @@ router.get('/logout', function (req, res, next) {
   })
 });
 
-// 新增用户 0 判断
+/*
+* 用户注册: 判断是否存在
+* */
 router.post("/register", function (req, res, next) {
   console.log(`req.body`, req.body);
   dbConUser.findByName(req.body.phone).then(function (msg) {
@@ -91,8 +89,10 @@ router.post("/register", function (req, res, next) {
   })
 })
 
-// 新增用户 1 新增
-// {username: aa, password: 11}
+/*
+* 用户注册: 存储信息
+*   req.body  {username: aa, password: 11}
+* */
 router.post("/register", function (req, res, next) {
   let uuidStr = uuid().replace(/\-/g, '');
   let md5 = crypto.createHash('md5');
@@ -205,7 +205,6 @@ router.get('/followTeacherList', function (req, res, next) {
       })
 });
 
-
 /*
  * 获取一个用户是否是老师的信息
  **/
@@ -227,16 +226,19 @@ router.get('/courseList', function (req, res, next) {
   })
 });
 
-// 随意一个查询接口，测试user session
+/*
+* 随意一个查询接口，测试user session
+* */
 router.get("/list", function (req, res, next) {
-  let username = req.session.username;
-  console.log("username of session".blue, username);
-  if (username) {
-    res.json(collections[username]);
+  if (req.session && req.session.userId) {
+    res.json({
+      status: 0,
+      userId: req.session.userId,
+      msg: '用户处于登录状态...'
+    });
   } else {
-    res.json({error: "用户未登录"});
+    res.json({error: "用户未登录~"});
   }
 });
-
 
 module.exports = router;
