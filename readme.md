@@ -1,8 +1,33 @@
+### 使用说明
+    开发环境
+        npm run nodemon
+    
+    ./public 中有两个测试页面
+        http://localhost:3000/test-user-login-logout-session.html
+        测试用户登录流程
+        
+        http://localhost:3000/test_file_up.html
+        测试文件文件上传功能
+
+    目录说明
+        bin express生成,启动项目
+        db  连接与操作数据库的逻辑
+        public  静态目录
+        routes  router.get('/api',....) 路由分流
+        sessions    用户登录的session存储
+        upload  文件上传后服务器存储目录
+        util    工具函数
+        views   模板文件夹 jade
+
 ### nodemon
 	安装nodemon，执行ndoemon
 		http://blog.csdn.net/a419419/article/details/78831869
 		node中的express框架，nodemon设置修改代码后服务自动重启
-		
+
+### express 常用的API
+	res.sendStatus(500);
+	res.redirect('/admin/house');
+
 ### mongodb
 #### 安装
 	安装32位:
@@ -144,28 +169,3 @@
 		path - 上传文件的全路径(DiskStorage)
 		buffer - 文件对象的Buffer(MemoryStorage)
 		
-### express 常用的API
-	res.sendStatus(500);
-	res.redirect('/admin/house');
-
-
-### 使用说明
-    开发环境
-        npm run nodemon
-    
-    ./public 中有两个测试页面
-        http://localhost:3000/test-user-login-logout-session.html
-        测试用户登录流程
-        
-        http://localhost:3000/test_file_up.html
-        测试文件文件上传功能
-
-    目录说明
-        bin express生成,启动项目
-        db  连接与操作数据库的逻辑
-        public  静态目录
-        routes  router.get('/api',....) 路由分流
-        sessions    用户登录的session存储
-        upload  文件上传后服务器存储目录
-        util    工具函数
-        views   模板文件夹 jade
